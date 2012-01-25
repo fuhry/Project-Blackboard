@@ -1,0 +1,10 @@
+Simple web app for displaying statuses on my door.
+
+Dependencies:
+	- mod_rewrite
+	- db/ must be writable by the apache user
+	- PHP 5 etc.
+	- WebAuth (or configure HTTP auth yourself by editing .htaccess)
+
+Contact: Dan Fuhry <fuhry@csh.rit.edu>
+License: GPL v2.0 or later at your option, see COPYING
