@@ -6,8 +6,15 @@ define('ST_DONE', 1);
 define('ST_TODO', 2);
 define('ST_WIP', 3);
 
+function db_validate_key($key)
+{
+	return preg_match('/^([a-z0-9_-]+\.)*[a-z0-9_-]+$/', $key) ? true : false;
+}
+
 function db_get($key, $default = false)
 {
+	if ( !db_validate_key($key) )
+		return $default;
 	$elements = explode('.', $key);
 	$entry = array_pop($elements);
 	$dir = implode('/', $elements);
@@ -20,6 +27,9 @@ function db_get($key, $default = false)
 
 function db_set($key, $value)
 {
+	if ( !db_validate_key($key) )
+		return false;
+	
 	if ( defined('DB_WRITE_RESTRICT') && !verify_restrict($key) )
 		return false;
 	
@@ -56,6 +66,9 @@ function verify_restrict($key)
 
 function db_unset($key)
 {
+	if ( !db_validate_key($key) )
+		return false;
+	
 	if ( defined('DB_WRITE_RESTRICT') && !verify_restrict($key) )
 		return false;
 	
@@ -81,6 +94,9 @@ function db_unset($key)
 
 function db_enum($key)
 {
+	if ( !db_validate_key($key) )
+		return false;
+	
 	$elements = explode('.', $key);
 	$dir = implode('/', $elements);
 	$result = array();
@@ -100,6 +116,9 @@ function db_enum($key)
 
 function db_gettype($key)
 {
+	if ( !db_validate_key($key) )
+		return false;
+	
 	$elements = explode('.', $key);
 	$dir = implode('/', $elements);
 	if ( is_file(DB_DIR . $dir) && file_exists(DB_DIR . $dir) )
