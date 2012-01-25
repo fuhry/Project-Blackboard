@@ -1,0 +1,86 @@
+body {
+	background-color: black;
+	font-family: arial, helvetica, sans-serif;
+	color: white;
+	padding: 30px 10px 10px 10px;
+}
+
+body.noscroll {
+	overflow: hidden;
+}
+
+h1 {
+	font-size: 72pt;
+}
+
+p.todo {
+	font-size: xx-large;
+}
+
+span.bullet.done {
+	font-weight: bold;
+	color: #00a000;
+}
+
+span.bullet.todo {
+	font-weight: bold;
+	color: #a0a0a0;
+}
+
+/* Tables */
+
+table, div.block {
+	margin-bottom: 20px;
+}
+
+th, h2 {
+	font-size: 36pt;
+	color: #00dcff;
+	text-align: left;
+	padding: 10px 0;
+}
+
+h2 {
+	margin: 0;
+}
+
+td, div.block {
+	font-size: 20pt;
+}
+
+strong {
+	color: #00ff72;
+}
+
+strong.todo {
+	color: #ff7200;
+}
+
+strong.wip {
+	color: #ffff72;
+}
+
+div.block {
+	float: left;
+	width: 50%;
+	line-height: 140%;
+}
+
+div.innerblock {
+	padding: 5px;
+}
+
+/* Irregulars */
+div.block.clock {
+	background-color: #202020;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	font-size: 8pt;
+	text-align: center;
+}
+
+div.block.clock h2 {
+	display: none;
+}
