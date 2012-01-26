@@ -13,3 +13,14 @@ function update()
 
 setInterval('update();', 10000);
 update();
+
+
+/* This script and many more are available free online at
+The JavaScript Source :: http://javascript.internet.com
+Created by: James Nisbet (morBandit) :: http://www.bandit.co.nz/ */
+
+$(function() {
+  document.onselectstart = function() {return false;} // ie
+  document.onmousedown = function() {return false;} // mozilla
+});
+
