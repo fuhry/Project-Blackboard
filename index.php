@@ -10,6 +10,6 @@
 		<script type="text/javascript" src="res/update.js"></script>
 	</head>
 	<body class="noscroll">
-		<h2>Loading...</h2>
+		<div class="block"><h2>Loading...</h2></div>
 	</body>
 </html>

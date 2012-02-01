@@ -1,17 +1,24 @@
+var _update_lock = false;
 function update()
 {
+	if ( _update_lock )
+		return false;
+	_update_lock = true;
 	$.get('ajax.php', function(resp)
 		{
-			$('body').html('');
+			$('body div.block:not(.persist)').remove();
 			for ( var i = 0; i < resp.length; i++ )
 			{
 				var classes = typeof(resp[i].classes) == 'object' ? ' ' + resp[i].classes.join(' ') : '';
-				$('body').append('<div class="block' + classes + '"><div class="innerblock"><h2>' + resp[i].title + '</h2>' + resp[i].content + '</div></div>');
+				classes += ' ' + resp[i].plugin;
+				if ( $('body div.block.persist.' + resp[i].plugin).length == 0 )
+					$('body').append('<div class="block' + classes + '"><div class="innerblock"><h2>' + resp[i].title + '</h2>' + resp[i].content + '</div></div>');
 			}
+			_update_lock = false;
 		}, 'json');
 }
 
-setInterval('update();', 10000);
+var update_interval = setInterval('update();', 10000);
 update();
 
 
@@ -24,3 +31,142 @@ $(function() {
   document.onmousedown = function() {return false;} // mozilla
 });
 
+/**
+ * Core AJAX library
+ */
+
+function ajaxMakeXHR()
+{
+	var ajax;
+	if (window.XMLHttpRequest) {
+		ajax = new XMLHttpRequest();
+	} else {
+		if (window.ActiveXObject) {           
+			ajax = new ActiveXObject("Microsoft.XMLHTTP");
+		} else {
+			alert('No AJAX support, unable to continue');
+			return;
+		}
+	}
+	return ajax;
+}
+
+function ajaxGet(uri, f)
+{
+	var ajax = ajaxMakeXHR();
+	if ( !ajax )
+	{
+		return false;
+	}
+	ajax.onreadystatechange = function()
+	{
+		f(ajax);
+	};
+	ajax.open('GET', uri, true);
+	ajax.setRequestHeader( "If-Modified-Since", "Sat, 1 Jan 2000 00:00:00 GMT" );
+	ajax.send(null);
+}
+
+function ajaxGetPoll(uri, callback)
+{
+	var rtlen = 0;
+	var orsc_seq = 0;
+	void(callback);
+	void(uri);
+	ajaxGet(uri, function(ajax)
+			{
+				if ( typeof(ajax.aborted) != 'boolean' )
+					ajax.aborted = false;
+				if ( ajax.readyState == 3 || ajax.readyState == 4 )
+				{
+					if ( ajax.aborted )
+						return;
+					orsc_seq++;
+					var rt = String(ajax.responseText);
+					rt = rt.substr(rtlen);
+					var timeout = 200;
+					var handle = true;
+					if ( ajax.readyState == 4 && rtlen == 0 )
+					{
+						// do nothing, we already have our response text at the right length
+					}
+					else if ( ajax.readyState == 3 && rt.length > 0 )
+					{
+						rtlen += rt.length;
+					}
+					else if ( ajax.readyState == 4 && rtlen > 0 )
+					{
+						// completion of request - do not call response handler, but repeat
+						timeout = 50;
+						handle = false;
+					}
+					else
+					{
+						handle = false;
+					}
+					
+					var do_continue = true;
+					if ( handle )
+					{
+						// control mechanism for server
+						if ( rt == 'STOP' )
+						{
+							ajax.aborted = true;
+							ajax.abort();
+							return;
+						}
+						
+						var ret = callback(rt, ajax, orsc_seq);
+						if ( typeof(ret) == 'boolean' && !ret )
+							do_continue = false;
+						
+					}
+					
+					void(callback);
+					void(uri);
+					
+					if ( do_continue && ajax.readyState == 4 )
+							setTimeout(function()
+								{
+									ajaxGetPoll(uri, callback);
+								}, timeout);
+				}
+			});
+}
+
+var fprint_cookie = 0;
+
+function watch_fprint()
+{
+	ajaxGetPoll('fprint-comet.php', function(rt, ajax, orsc_seq)
+		{
+			eval('var response = ' + rt + ';');
+			if ( typeof(response.error) == 'string' )
+			{
+				if ( response.error == 'Timed_out' )
+					return;
+				$('div.block.fprint').html('<div class="innerblock"><strong class="uhoh">' + response.error.replace(/_/g, ' ') + '</strong></div>').show();
+			}
+			else
+			{
+				var finger = response.finger.replace(/-/g, ' ');
+				// finger = (finger.charAt(0).toUpperCase()) + finger.substr(1);
+				$('div.block.fprint').html('<div class="innerblock"><strong>' + response.user + '</strong> swiped <strong>' + finger + '</strong></div>').show();
+				update();
+			}
+			fprint_clear(response.ts);
+		});
+}
+
+function fprint_clear(cookie)
+{
+	fprint_cookie = cookie;
+	void(cookie);
+	setTimeout(function()
+		{
+			if ( cookie == fprint_cookie )
+				$('div.block.fprint').hide().html('');
+		}, 3000);
+}
+
+watch_fprint();

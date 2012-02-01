@@ -13,16 +13,19 @@ function get_blocks()
 			if ( preg_match('/\.php$/', $dp) )
 			{
 				$ret = include(BLOCK_DIR . $dp);
+				$plugin = preg_replace('/\.php$/', '', $dp);
 				if ( is_array($ret) )
 				{
 					if ( isset($ret['title']) )
 					{
+						$ret['plugin'] = $plugin;
 						$blocks[] = $ret;
 					}
 					else
 					{
 						foreach ( $ret as $b )
 						{
+							$b['plugin'] = $plugin;
 							$blocks[] = $b;
 						}
 					}

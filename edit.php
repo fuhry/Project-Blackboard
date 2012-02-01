@@ -4,6 +4,44 @@ $user = $_SERVER['REMOTE_USER'];
 define('DB_WRITE_RESTRICT', "users.$user.*");
 require('inc/db.php');
 
+if ( isset($_POST['schedule']) )
+{
+	switch($_POST['schedule']['action'])
+	{
+		case 'add':
+			$schedule = db_get("users.$user.schedule", array());
+			foreach ( array('start_hour', 'start_minute', 'end_hour', 'end_minute') as $key )
+			{
+				$_POST['schedule_add'][$key] = intval($_POST['schedule_add'][$key]);
+				if ( $_POST['schedule_add'][$key] < 0 || (preg_match('/hour$/', $key) && $_POST['schedule_add'][$key] > 23) || (preg_match('/minute$/', $key) && $_POST['schedule_add'][$key] > 59) )
+				{
+					echo "<p><strong class=\"uhoh\">You entered an invalid time.</strong></p>";
+					break 2;
+				}
+			}
+			$schedule[] = $_POST['schedule_add'];
+			db_set("users.$user.schedule", $schedule);
+			break;
+		case 'delete':
+			$schedule = db_get("users.$user.schedule", array());
+			if ( isset($_POST['schedule_del']) && is_array($_POST['schedule_del']) )
+			{
+				foreach ( $_POST['schedule_del'] as $id => $_ )
+				{
+					$id = intval($id);
+					echo "unset(\$schedule[$id]) ({$schedule[$id]['name']})<br />\n";
+					unset($schedule[$id]);
+				}
+				$schedule = array_values($schedule);
+				db_set("users.$user.schedule", $schedule);
+			}
+			break;
+	}
+	unset($_POST['schedule']);
+	unset($_POST['schedule_add']);
+	unset($_POST['schedule_del']);
+}
+
 db_update($_POST);
 
 if ( db_gettype("users.$user") == 'directory' && !($key = db_get("users.$user.api_key")) )
@@ -90,6 +128,62 @@ if ( db_gettype("users.$user") == 'directory' && !($key = db_get("users.$user.ap
 			?>
 		</ul>
 		<input type="submit" value="Update" />
+		</form>
+		
+		<h2>Your schedule</h2>
+		<p>Swipe out when you're leaving to update your status.</p>
+		
+		<form method="post">
+		<table border="0" class="normal table">
+			<thead>
+				<tr>
+					<th>Type</th>
+					<th>Name</th>
+					<th>Location</th>
+					<th>Days</th>
+					<th>Start time</th>
+					<th>End time</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach ( db_get("users.$user.schedule", array()) as $i => $entry ): ?>
+					<tr>
+						<td><?php echo htmlspecialchars($entry['type']); ?></td>
+						<td><?php echo htmlspecialchars($entry['name']); ?></td>
+						<td><?php echo htmlspecialchars($entry['location']); ?></td>
+						<td><?php echo htmlspecialchars(implode('', $entry['days'])); ?></td>
+						<td><?php printf("%d:%02d", $entry['start_hour'], $entry['start_minute']); ?></td>
+						<td><?php printf("%d:%02d", $entry['end_hour'], $entry['end_minute']); ?></td>
+						<td><input type="checkbox" name="schedule_del[<?php echo $i; ?>]" /></td>
+					</tr>
+				<?php endforeach; ?>
+				<tr class="add">
+					<td><select name="schedule_add[type]"><option value="class">Class</option><option value="other">Other</option></select></td>
+					<td>Status/class name: <input type="text" name="schedule_add[name]" /></td>
+					<td>Location: <input type="text" name="schedule_add[location]" /></td>
+					<td>
+						Days:
+						<table border="0">
+							<tr>
+								<?php foreach ( array('M', 'T', 'W', 'R', 'F', 'S', 'U') as $day ): ?>
+								<td style="text-align: center;"><input type="checkbox" name="schedule_add[days][]" value="<?php echo $day; ?>" />
+								<?php endforeach; ?>
+							</tr>
+							<tr>
+								<?php foreach ( array('M', 'T', 'W', 'R', 'F', 'S', 'S') as $day ): ?>
+								<td style="text-align: center;"><?php echo $day; ?></td>
+								<?php endforeach; ?>
+							</tr>
+						</table>
+					</td>
+					<td>Start time: <input size="2" type="text" name="schedule_add[start_hour]" />:<input size="2" type="text" name="schedule_add[start_minute]" /></td>
+					<td>End time: <input size="2" type="text" name="schedule_add[end_hour]" />:<input size="2" type="text" name="schedule_add[end_minute]" /></td>
+					<td><button name="schedule[action]" value="add">Add entry</button></td>
+				</tr>
+			</tbody>
+		</table>
+		<button name="schedule[action]" value="delete">Delete selected</button>
 		</form>
 		
 		<?php

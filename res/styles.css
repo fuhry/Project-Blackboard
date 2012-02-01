@@ -5,6 +5,10 @@ body {
 	padding: 30px 10px 10px 10px;
 }
 
+.hide {
+	display: none;
+}
+
 body.noscroll {
 	overflow: hidden;
 }
@@ -60,6 +64,10 @@ strong.wip {
 	color: #ffff72;
 }
 
+strong.uhoh {
+	color: #ff2020;
+}
+
 div.block {
 	float: left;
 	width: 50%;
@@ -84,3 +92,70 @@ div.block.clock {
 div.block.clock h2 {
 	display: none;
 }
+
+div.block.fprint {
+	background-color: #202020;
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	font-size: 8pt;
+	text-align: center;
+	margin-bottom: 0;
+}
+
+div.block.fprint h2 {
+	display: none;
+}
+
+/* editor */
+table.table.normal th {
+	font-size: 14pt !important;
+}
+
+table.table.normal td {
+	font-size: 11pt !important;
+}
+
+table.schedule {
+	border-width: 1px 0 0 1px;
+	border-collapse: collapse;
+	font-size: 7pt;
+	line-height: normal;
+}
+table.schedule th {
+	font-size: 7pt !important;
+	text-align: center !important;
+	padding: 0;
+}
+table.schedule td {
+	font-size: 7pt !important;
+	background-color: #101010;
+}
+
+table.schedule th.mainhead {
+	font-size: 10pt !important;
+}
+
+table.schedule td.filled {
+	color: #a0a0a0;
+	width: 75px;
+}
+table.schedule td.spacer {
+	width: 75px;
+}
+table.schedule td.filled strong {
+	color: #d0d0d0;
+	font-weight: bold;
+}
+
+table.schedule td.filled.cell0 { background-color: rgba(255,   0,   0, 0.2); }
+table.schedule td.filled.cell1 { background-color: rgba(  0, 255,   0, 0.2); }
+table.schedule td.filled.cell2 { background-color: rgba(  0,   0, 255, 0.2); }
+table.schedule td.filled.cell3 { background-color: rgba(255, 255,   0, 0.2); }
+table.schedule td.filled.cell4 { background-color: rgba(255,   0, 255, 0.2); }
+table.schedule td.filled.cell5 { background-color: rgba(  0, 255, 255, 0.2); }
+table.schedule td.filled.cell6 { background-color: rgba(255, 128,   0, 0.2); }
+table.schedule td.filled.cell7 { background-color: rgba(  0, 255, 128, 0.2); }
+table.schedule td.filled.cell8 { background-color: rgba(128,   0, 255, 0.2); }
+table.schedule td.filled.cell9 { background-color: rgba(128, 255,   0, 0.2); }
