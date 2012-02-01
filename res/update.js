@@ -67,13 +67,18 @@ function ajaxGet(uri, f)
 	ajax.send(null);
 }
 
-function ajaxGetPoll(uri, callback)
+function ajaxGetPoll(uri, callback, not_first)
 {
 	var rtlen = 0;
 	var orsc_seq = 0;
 	void(callback);
 	void(uri);
-	ajaxGet(uri, function(ajax)
+	var uri_ = uri;
+	if ( typeof(not_first) != 'boolean' )
+	{
+		uri_ += (uri.indexOf('?') >= 0 ? '&' : '?') + 'first=yup';
+	}
+	ajaxGet(uri_, function(ajax)
 			{
 				if ( typeof(ajax.aborted) != 'boolean' )
 					ajax.aborted = false;
@@ -128,18 +133,22 @@ function ajaxGetPoll(uri, callback)
 					if ( do_continue && ajax.readyState == 4 )
 							setTimeout(function()
 								{
-									ajaxGetPoll(uri, callback);
+									ajaxGetPoll(uri, callback, true);
 								}, timeout);
 				}
 			});
+	uri_ = uri;
 }
 
 var fprint_cookie = 0;
+var api_temp_key = false;
 
 function watch_fprint()
 {
 	ajaxGetPoll('fprint-comet.php', function(rt, ajax, orsc_seq)
 		{
+			if ( rt == '' )
+				return;
 			eval('var response = ' + rt + ';');
 			if ( typeof(response.error) == 'string' )
 			{
@@ -153,6 +162,11 @@ function watch_fprint()
 				// finger = (finger.charAt(0).toUpperCase()) + finger.substr(1);
 				$('div.block.fprint').html('<div class="innerblock"><strong>' + response.user + '</strong> swiped <strong>' + finger + '</strong></div>').show();
 				update();
+				if ( response.you_are_the_chosen_one )
+				{
+					api_temp_key = { user: response.user, key: response.api_key };
+					menu_display();
+				}
 			}
 			fprint_clear(response.ts);
 		});

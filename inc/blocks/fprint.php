@@ -10,52 +10,15 @@ $block = array(
 
 $hooks['plugin.fprint.state'] = function($state)
 	{
-		if ( !empty($state['user']) )
-		{
-			if ( db_get("users.{$state['user']}.last_swipe") == 'in' )
-			{
-				// Swiping out
-				$schedule = db_get("users.{$state['user']}.schedule", array());
-				$days = 'MTWRFSU';
-				$status = 'Out';
-				$location = $class = '';
-				foreach ( $schedule as $entry )
-				{
-					$today = $days{ intval(date('w')) - 1 };
-					$now = (intval(date('G')) * 60) + intval(ltrim(date('i'), '0'));
-					$start = (intval($entry['start_hour']) * 60) + intval($entry['start_minute']);
-					$end = (intval($entry['end_hour']) * 60) + intval($entry['end_minute']);
-					$d = implode('', $entry['days']);
-					// echo "today is $today, event on $d starts at $start, ends at $end, now is $now\n";
-					if ( in_array($today, $entry['days']) && ($now + 25) > $start && $now < $end )
-					{
-						// this event is happening now, or about to happen
-						if ( $entry['type'] == 'class' )
-						{
-							$status = 'In class';
-							$location = $entry['location'];
-							$class = $entry['name'];
-						}
-						else
-						{
-							$location = $entry['location'];
-							$status = $entry['name'];
-						}
-					}
-				}
-				db_set("users.{$state['user']}.status", $status);
-				db_set("users.{$state['user']}.location", $location);
-				db_set("users.{$state['user']}.class", $class);
-				db_set("users.{$state['user']}.last_swipe", 'out');
-			}
-			else
-			{
-				db_set("users.{$state['user']}.last_swipe", 'in');
-				db_set("users.{$state['user']}.status", "Available");
-				db_set("users.{$state['user']}.location", "On floor");
-				db_set("users.{$state['user']}.class", "");
-			}
-		}
+		$state['srcip'] = $_SERVER['REMOTE_ADDR'];
+		db_set('plugin.fprint.state', $state);
+		
+		$temp_keys = db_get("users.{$state['user']}.api_keys_temp", array());
+		$temp_keys[ $_SERVER['REMOTE_ADDR'] ] = array(
+					'key' => sha1(microtime() . mt_rand()),
+					'expires' => time() + 120
+				);
+		db_set("users.{$state['user']}.api_keys_temp", $temp_keys);
 	};
 
 return $block;

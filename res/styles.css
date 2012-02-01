@@ -140,6 +140,7 @@ table.schedule th.mainhead {
 table.schedule td.filled {
 	color: #a0a0a0;
 	width: 75px;
+	/* opacity: 0.5; */
 }
 table.schedule td.spacer {
 	width: 75px;
@@ -152,10 +153,33 @@ table.schedule td.filled strong {
 table.schedule td.filled.cell0 { background-color: rgba(255,   0,   0, 0.2); }
 table.schedule td.filled.cell1 { background-color: rgba(  0, 255,   0, 0.2); }
 table.schedule td.filled.cell2 { background-color: rgba(  0,   0, 255, 0.2); }
-table.schedule td.filled.cell3 { background-color: rgba(255, 255,   0, 0.2); }
+table.schedule td.filled.cell3 { background-color: rgba(255, 255,   0, 0.2); } 
 table.schedule td.filled.cell4 { background-color: rgba(255,   0, 255, 0.2); }
 table.schedule td.filled.cell5 { background-color: rgba(  0, 255, 255, 0.2); }
 table.schedule td.filled.cell6 { background-color: rgba(255, 128,   0, 0.2); }
 table.schedule td.filled.cell7 { background-color: rgba(  0, 255, 128, 0.2); }
 table.schedule td.filled.cell8 { background-color: rgba(128,   0, 255, 0.2); }
 table.schedule td.filled.cell9 { background-color: rgba(128, 255,   0, 0.2); }
+table.schedule td.filled.now   { opacity: 1; }
+
+/* menu */
+div.menu {
+	background-color: #101010;
+	position: absolute;
+	top: 180px;
+	left: 5px;
+	width: 300px;
+	border: 1px solid #888;
+}
+
+div.menu ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+div.menu ul li {
+	display: block;
+	padding: 16px 12px;
+	font-size: 14pt;
+}

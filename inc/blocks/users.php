@@ -9,21 +9,63 @@ foreach ( db_enum('users') as $u )
 	if ( empty($sn) )
 		continue;
 	$block = array('title' => $sn, 'content' => '');
-	if ( $st = db_get("users.$u.status") )
+	
+	$st = db_get("users.$u.status");
+	$pr = db_get("users.$u.project");
+	$loc = db_get("users.$u.location");
+	$cls = db_get("users.$u.class");
+	
+	if ( $st == '__inclass__' )
+	{
+		$schedule = db_get("users.$u.schedule", array());
+		$days = 'MTWRFSU';
+		foreach ( $schedule as $entry )
+		{
+			$today = $days{ intval(date('w')) - 1 };
+			$now = (intval(date('G')) * 60) + intval(ltrim(date('i'), '0'));
+			$start = (intval($entry['start_hour']) * 60) + intval($entry['start_minute']);
+			$end = (intval($entry['end_hour']) * 60) + intval($entry['end_minute']);
+			$d = implode('', $entry['days']);
+			// echo "today is $today, event on $d starts at $start, ends at $end, now is $now\n";
+			if ( in_array($today, $entry['days']) && ($now + 25) > $start && $now < $end )
+			{
+				// this event is happening now, or about to happen
+				if ( $entry['type'] == 'class' )
+				{
+					$st = 'In class';
+					$loc = $entry['location'];
+					$cls = $entry['name'];
+					break;
+				}
+				else
+				{
+					$loc = $entry['location'];
+					$st = $entry['name'];
+				}
+			}
+			else
+			{
+				$st = 'In class';
+				$cls = 'Unknown';
+			}
+		}
+	}
+	
+	if ( $st )
 	{
 		$block['content'] .= "Current status: <strong>$st</strong><br />";
 	}
-	if ( $pr = db_get("users.$u.project") )
+	if ( $pr )
 	{
 		$block['content'] .= "Project: <strong>$pr</strong><br />";
 	}
-	if ( $loc = db_get("users.$u.location") )
+	if ( $loc )
 	{
 		$block['content'] .= "Location: <strong>$loc</strong><br />";
 	}
-	if ( $loc = db_get("users.$u.class") )
+	if ( $cls )
 	{
-		$block['content'] .= "Class: <strong>$loc</strong><br />";
+		$block['content'] .= "Class: <strong>$cls</strong><br />";
 	}
 	/*
 	if ( $tw = db_get("users.$u.twitter") )
@@ -92,7 +134,7 @@ EOF;
 		
 		$interval = 30;
 		$min = floor($min / $interval) * $interval;
-		$max = ceil($max / $interval) * $interval;
+		$max = (ceil($max / $interval)-1) * $interval;
 		for ( $i = $min; $i <= $max; $i += $interval )
 		{
 			$block['content'] .= '<tr>';
@@ -113,8 +155,11 @@ EOF;
 					$end_block = ceil($end_time / $interval) * $interval;
 					if ( $start_block == $i && in_array($day, $entry['days']) )
 					{
+						$now = intval(date('G') * 60) + intval(date('i'));
+						$daylist = 'MTWRFSU';
+						$is_now = $daylist{ intval(date('w'))-1 } == $day && $now >= $start_time && $now <= $end_time ? ' now' : '';
 						$rowspan = $skip_rows[$day] = round((($end_block - $start_block)+1) / $interval);
-						$cell = '<td class="filled cell' . ($j % 10) . '" valign="top" rowspan="'. $rowspan . '">'
+						$cell = '<td class="filled cell' . ($j % 10) . '' . $is_now . '" valign="top" rowspan="'. $rowspan . '">'
 									. sprintf(
 											"<strong>%s</strong><br />"
 											. "%d:%02d &ndash; %d:%02d<br />"

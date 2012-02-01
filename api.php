@@ -30,7 +30,18 @@ if ( !($key = db_get("users.$user.api_key")) )
 	womp("You don't have the API enabled.");
 
 if ( $api_key !== $key )
-	womp("Incorrect API key");
+{
+	// incorrect permanent API key, is there a valid temp key?
+	$temp_keys = db_get("users.$user.api_keys_temp", array());
+	if ( isset($temp_keys[ $_SERVER['REMOTE_ADDR'] ]) && $temp_keys[ $_SERVER['REMOTE_ADDR'] ]['expires'] >= time() && $api_key === $temp_keys[ $_SERVER['REMOTE_ADDR'] ]['key'] )
+	{
+		// let the request continue
+	}
+	else
+	{
+		womp("Incorrect API key");
+	}
+}
 
 
 switch($call)
@@ -55,7 +66,7 @@ switch($call)
 			{
 				if ( isset($hooks[$get]) && is_callable($hooks[$get]) )
 				{
-					call_user_func($hooks[$get], $input_dec);
+					call_user_func($hooks[$get], $input_dec, $get);
 				}
 				echo json_encode(array(
 						'result' => 'success'

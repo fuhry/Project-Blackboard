@@ -8,6 +8,7 @@
 		<script charset="utf-8" src="http://widgets.twimg.com/j/2/widget.js"></script>
 		<script type="text/javascript" src="res/jquery.js"></script>
 		<script type="text/javascript" src="res/update.js"></script>
+		<script type="text/javascript" src="res/menu.js"></script>
 	</head>
 	<body class="noscroll">
 		<div class="block"><h2>Loading...</h2></div>
