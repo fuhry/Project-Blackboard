@@ -4,18 +4,27 @@ function update()
 	if ( _update_lock )
 		return false;
 	_update_lock = true;
-	$.get('ajax.php', function(resp)
-		{
-			$('body div.block:not(.persist)').remove();
-			for ( var i = 0; i < resp.length; i++ )
+	$.ajax({
+			type: 'GET',
+			url: 'ajax.php',
+			success: function(resp)
 			{
-				var classes = typeof(resp[i].classes) == 'object' ? ' ' + resp[i].classes.join(' ') : '';
-				classes += ' ' + resp[i].plugin;
-				if ( $('body div.block.persist.' + resp[i].plugin).length == 0 )
-					$('body').append('<div class="block' + classes + '"><div class="innerblock"><h2>' + resp[i].title + '</h2>' + resp[i].content + '</div></div>');
+				$('body div.block:not(.persist)').remove();
+				for ( var i = 0; i < resp.length; i++ )
+				{
+					var classes = typeof(resp[i].classes) == 'object' ? ' ' + resp[i].classes.join(' ') : '';
+					classes += ' ' + resp[i].plugin;
+					if ( $('body div.block.persist.' + resp[i].plugin).length == 0 )
+						$('body').append('<div class="block' + classes + '"><div class="innerblock"><h2>' + resp[i].title + '</h2>' + resp[i].content + '</div></div>');
+				}
+				_update_lock = false;
+			},
+			dataType: 'json',
+			error: function(xhr, ajaxOptions, exception)
+			{
+				_update_lock = false;
 			}
-			_update_lock = false;
-		}, 'json');
+		});
 }
 
 var update_interval = setInterval('update();', 10000);
