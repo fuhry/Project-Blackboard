@@ -6,10 +6,23 @@ define('ST_DONE', 1);
 define('ST_TODO', 2);
 define('ST_WIP', 3);
 
+/**
+ * Make sure a key name is syntactically correct.
+ * @param string
+ * @return bool
+ */
+
 function db_validate_key($key)
 {
 	return preg_match('/^([a-z0-9_-]+\.)*[a-z0-9_-]+$/', $key) ? true : false;
 }
+
+/**
+ * Retrieve a value from the database
+ * @param string Key name
+ * @param mixed Default value. Defaults to false.
+ * @return mixed
+ */ 
 
 function db_get($key, $default = false)
 {
@@ -25,11 +38,23 @@ function db_get($key, $default = false)
 	return $default;
 }
 
+/**
+ * Store a value in the database
+ * @param string Key name
+ * @param mixed Value, can be pretty much anything besides closures and objects
+ */
+
 function db_set($key, $value)
 {
 	if ( !db_validate_key($key) )
 		return false;
 	
+	// Permissions check. Scripts like edit and api can define this DB_WRITE_RESTRICT
+	// constant to limit writes to the database to certain patterns, protecting the
+	// database from modifications of keys a user shouldn't modify.
+	// syntax: key1,key2,...,keyn - can contain asterisks
+	//
+	// Remember kids, it's a constant. You can only define it once and you can't undefine it.
 	if ( defined('DB_WRITE_RESTRICT') && !verify_restrict($key) )
 		return false;
 	
@@ -49,10 +74,17 @@ function db_set($key, $value)
 	return false;
 }
 
+/**
+ * Checks a key against the DB_WRITE_RESTRICT whitelist.
+ * @param string
+ * @return bool true = allowed to write
+ */
+
 function verify_restrict($key)
 {
 	foreach ( explode(',', DB_WRITE_RESTRICT) as $rule )
 	{
+		// turn the restriction rule into 
 		$rule_expr = '/^' . str_replace(array('.', '*'), array('\\.', '.*?'), $rule) . '$/';
 		if ( preg_match($rule_expr, $key) )
 		{
@@ -63,6 +95,12 @@ function verify_restrict($key)
 	if ( !defined('DB_SILENT') ) echo "write to $key DENIED<br />\n";
 	return false;
 }
+
+/**
+ * Delete a database key, recursively if necessary.
+ * @param string
+ * @return bool
+ */
 
 function db_unset($key)
 {
@@ -92,6 +130,12 @@ function db_unset($key)
 	return true;
 }
 
+/**
+ * List subkeys underneath a key
+ * @param string
+ * @return array
+ */
+
 function db_enum($key)
 {
 	if ( !db_validate_key($key) )
@@ -114,6 +158,12 @@ function db_enum($key)
 	return $result;
 }
 
+/**
+ * Is a key a value, or a directory with more keys in it?
+ * @param string Key name
+ * @return string 'value', 'directory', or 'dne' (does not exist)
+ */
+
 function db_gettype($key)
 {
 	if ( !db_validate_key($key) )
@@ -128,6 +178,12 @@ function db_gettype($key)
 	else
 		return 'dne';
 }
+
+/**
+ * Take a nested array and convert it to key-value format. Used in edit.php to directly pass in $_POST. Recursive.
+ * @param array
+ * @param array Internal use only
+ */
 
 function db_update($arr, $stack = array())
 {

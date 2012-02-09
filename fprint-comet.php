@@ -18,6 +18,7 @@ while ( true )
 	{
 		$lt = $state['ts'];
 		$state['ts_str'] = date('r', $state['ts']);
+		// is the requester from the same IP as the node which posted the fingerprint?
 		$state['you_are_the_chosen_one'] = $state['srcip'] === $_SERVER['REMOTE_ADDR'] && isset($state['user']);
 		if ( $state['you_are_the_chosen_one'] )
 		{

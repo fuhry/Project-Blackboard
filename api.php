@@ -20,6 +20,7 @@ $user = array_shift($query);
 $api_key = array_shift($query);
 $call = array_shift($query);
 
+// root is all powerful
 if ( $user != 'root' )
 	define('DB_WRITE_RESTRICT', "users.$user.*,meta.status");
 define('DB_SILENT', 1);
