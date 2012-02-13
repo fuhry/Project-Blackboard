@@ -28,7 +28,8 @@ var menu = {
 			"On floor": {
 					"Just here": { status: "Available", location: "On floor" },
 					"Working on a project": { status: "PROJECTS!", location: "On floor" },
-					"Around": { status: "Available", location: "On floor, out of my room" }
+					"Around": { status: "Available", location: "On floor, out of my room" },
+					"Vidya games": { status: "Playing vidya games", location: "On floor" },
 				},
 			
 		},
@@ -48,7 +49,12 @@ var menu = {
 							Ritz: { status: "Out for food", location: "RITZ Sports Zone" },
 							"Crossroads/Salsarita's": { status: "Out for food", location: "Crossroads/Salsarita's" },
 							"Brick City": { status: "Out for food", location: "Brick City Café" },
-							"Off-campus": { status: "Out for food", location: "Off-campus" },
+							"Off-campus": {
+								"Mark's" : { status: "Out for food", location: "Mark's Mark's Mark's!" },
+								"DiBella's" : { status: "Out for food", location: "DiBella's" },
+								"Five Guys" : { status: "Out for food", location: "Five Guys" },
+								"Chipotle" : { status: "Out for food", location: "Chipotle" }
+							},
 						}
 				},
 			"Extended away": {
