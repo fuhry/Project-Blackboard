@@ -157,7 +157,8 @@ EOF;
 					{
 						$now = intval(date('G') * 60) + intval(date('i'));
 						$daylist = 'MTWRFSU';
-						$is_now = $daylist{ intval(date('w'))-1 } == $day && $now >= $start_time && $now <= $end_time ? ' now' : '';
+						$dayidx = ($n = intval(date('w'))-1) < 0 ? $n + 7 : $n;
+						$is_now = $daylist{ $dayidx } == $day && $now >= $start_time && $now <= $end_time ? ' now' : '';
 						$rowspan = $skip_rows[$day] = round((($end_block - $start_block)+1) / $interval);
 						$cell = '<td class="filled cell' . ($j % 10) . '' . $is_now . '" valign="top" rowspan="'. $rowspan . '">'
 									. sprintf(
