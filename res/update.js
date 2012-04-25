@@ -158,6 +158,9 @@ function watch_fprint()
 		{
 			if ( rt == '' )
 				return;
+			if ( rt.length > 2 )
+				rt = rt.replace(/^\{\}/, '');
+			console.debug(rt);
 			eval('var response = ' + rt + ';');
 			if ( typeof(response.error) == 'string' )
 			{
@@ -165,7 +168,7 @@ function watch_fprint()
 					return;
 				$('div.block.fprint').html('<div class="innerblock"><strong class="uhoh">' + response.error.replace(/_/g, ' ') + '</strong></div>').show();
 			}
-			else
+			else if ( typeof(response.finger) == 'string' )
 			{
 				var finger = response.finger.replace(/-/g, ' ');
 				// finger = (finger.charAt(0).toUpperCase()) + finger.substr(1);

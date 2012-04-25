@@ -47,16 +47,24 @@ var menu = {
 					"The Whore": { status: "Out for food", location: "The Whore" },
 					Other: {
 							Ritz: { status: "Out for food", location: "RITZ Sports Zone" },
-							"Crossroads/Salsarita's": { status: "Out for food", location: "Crossroads/Salsarita's" },
+							"Salsarita's": { status: "Out for food", location: "Salsarita's" },
 							"Brick City": { status: "Out for food", location: "Brick City Café" },
-							"Off-campus": {
-								"Mark's" : { status: "Out for food", location: "Mark's Mark's Mark's!" },
-								"DiBella's" : { status: "Out for food", location: "DiBella's" },
-								"Five Guys" : { status: "Out for food", location: "Five Guys" },
-								"Chipotle" : { status: "Out for food", location: "Chipotle" }
-							},
+							"More" : {
+								"Crossroads": { status: "Out for food", location: "Crossroads" },
+								"Beanz": { status: "Out for food", location: "Beanz" },
+								"Gracie's": { status: "Out for food", location: "Gracie's" },
+								"Off-campus": {
+									"Mark's" : { status: "Out for food", location: "Mark's Mark's Mark's!" },
+									"DiBella's" : { status: "Out for food", location: "DiBella's" },
+									"Five Guys" : { status: "Out for food", location: "Five Guys" },
+									"Chipotle" : { status: "Out for food", location: "Chipotle" }
+								},
+							}
 						}
 				},
+			"Around campus": {
+				Hockey: { status: "At HOCKEY!", location: "Frank Ritter Arena" }
+			},
 			"Extended away": {
 					"Out for the weekend": { status: "Away through the weekend", location: '' }
 				}
