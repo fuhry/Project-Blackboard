@@ -55,6 +55,7 @@ catch ( Exception $e )
 	$content = 'THE FUCKING WEATHER IS FUCKING DOWN';
 }
 
+/*
 if ( !empty($cache) )
 {
 	$content .= '<br /><div style="font-size: x-small">
@@ -66,6 +67,7 @@ if ( !empty($cache) )
 						</ul>
 					</div>';
 }
+*/
 
 return array(
 		'title' => 'The Fucking Weather', // 'The f*cking weather',
