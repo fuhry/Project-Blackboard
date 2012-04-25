@@ -1,5 +1,7 @@
 <?php
 
+return false;
+
 $block = array('title' => 'Project status', 'content' => '');
 
 foreach ( db_get('meta.status') as $k => $v )
