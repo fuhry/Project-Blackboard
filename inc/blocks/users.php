@@ -53,7 +53,7 @@ foreach ( db_enum('users') as $u )
 	
 	if ( $st )
 	{
-		$block['content'] .= "Current status: <strong>$st</strong><br />";
+		$block['content'] .= "<strong style=\"font-weight: normal\">$st</strong><br />";
 	}
 	if ( $pr )
 	{
