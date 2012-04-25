@@ -10,6 +10,9 @@ $lt = time() - 10;
 
 $limit = isset($_GET['first']) ? 2 : 120;
 
+echo '{}';
+flush();
+
 while ( true )
 {
 	clearstatcache();
@@ -17,7 +20,7 @@ while ( true )
 	if ( $state['ts'] > $lt )
 	{
 		$lt = $state['ts'];
-		$state['ts_str'] = date('r', $state['ts']);
+		// $state['ts_str'] = date('r', $state['ts']);
 		// is the requester from the same IP as the node which posted the fingerprint?
 		$state['you_are_the_chosen_one'] = $state['srcip'] === $_SERVER['REMOTE_ADDR'] && isset($state['user']);
 		if ( $state['you_are_the_chosen_one'] )
